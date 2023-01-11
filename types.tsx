@@ -1,11 +1,9 @@
-/**
- * Learn more about using TypeScript with React Navigation:
- * https://reactnavigation.org/docs/typescript/
- */
-
-import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { DrawerScreenProps as _DrawerScreenProps } from '@react-navigation/drawer'
+import {
+  CompositeScreenProps,
+  NavigatorScreenParams,
+} from '@react-navigation/native'
 
 declare global {
   namespace ReactNavigation {
@@ -14,22 +12,20 @@ declare global {
 }
 
 export type RootStackParamList = {
-  Root: NavigatorScreenParams<RootTabParamList> | undefined;
-  Modal: undefined;
-  NotFound: undefined;
-};
+  Drawer: NavigatorScreenParams<DrawerParamList> | undefined
+  Calendar: { title: string }
+  CreateEvent: undefined
+}
 
-export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
-  RootStackParamList,
-  Screen
->;
+export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
+  NativeStackScreenProps<RootStackParamList, Screen>
 
-export type RootTabParamList = {
-  TabOne: undefined;
-  TabTwo: undefined;
-};
+export type DrawerParamList = {
+  Home: undefined
+}
 
-export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<
-  BottomTabScreenProps<RootTabParamList, Screen>,
-  NativeStackScreenProps<RootStackParamList>
->;
+export type DrawerScreenProps<Screen extends keyof DrawerParamList> =
+  CompositeScreenProps<
+    _DrawerScreenProps<DrawerParamList, Screen>,
+    NativeStackScreenProps<RootStackParamList>
+  >

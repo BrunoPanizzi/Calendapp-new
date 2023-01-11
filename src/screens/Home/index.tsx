@@ -1,18 +1,17 @@
-import { NavigationProp } from '@react-navigation/native'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
-export default function Home({
-  navigation,
-}: {
-  navigation: NavigationProp<any>
-}) {
+import { DrawerScreenProps } from '../../../types'
+
+export default function Home({ navigation }: DrawerScreenProps<'Home'>) {
   return (
     <View style={styles.container}>
       <Text> this is the home screen</Text>
       <Pressable
         style={styles.button}
         onPress={() => {
-          navigation.navigate('Calendar')
+          navigation.navigate('Calendar', {
+            title: 'Calendar',
+          })
         }}
       >
         <Text>Go to the calendar screeen</Text>

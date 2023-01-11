@@ -9,11 +9,7 @@ import { ColorSchemeName, Pressable, Text, View } from 'react-native'
 
 import Colors from '../constants/Colors'
 import useColorScheme from '../hooks/useColorScheme'
-import {
-  RootStackParamList,
-  RootTabParamList,
-  RootTabScreenProps,
-} from '../../types'
+import { RootStackParamList, DrawerParamList } from '../../types'
 import LinkingConfiguration from './LinkingConfiguration'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 
@@ -51,7 +47,7 @@ const headerConfig = {
   },
 } as const
 
-const Stack = createNativeStackNavigator() //TODO: type this thing
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 function RootNavigator() {
   return (
@@ -70,7 +66,7 @@ function RootNavigator() {
       <Stack.Screen
         name='Calendar'
         component={Calendar}
-        // options={({ route }) => ({ title: route.params.title })}
+        options={({ route }) => ({ title: route.params.title })}
       />
       <Stack.Screen
         name='CreateEvent'
@@ -81,7 +77,7 @@ function RootNavigator() {
   )
 }
 
-const Drawer = createDrawerNavigator() // TODO: type this thing too
+const Drawer = createDrawerNavigator<DrawerParamList>()
 
 function DrawerNavigation() {
   return (
