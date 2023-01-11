@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet } from 'react-native'
+
+import { Text, View } from '../../components/Themed'
 
 import { DrawerScreenProps } from '../../../types'
 
@@ -25,7 +27,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
   },
   button: {
     backgroundColor: 'aquamarine',

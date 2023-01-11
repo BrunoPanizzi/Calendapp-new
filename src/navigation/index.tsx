@@ -1,13 +1,9 @@
-import {
-  NavigationContainer,
-  DefaultTheme,
-  DarkTheme,
-} from '@react-navigation/native'
+import { NavigationContainer, Theme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import * as React from 'react'
 import { ColorSchemeName, Pressable, Text, View } from 'react-native'
 
-import Colors from '../constants/Colors'
+import Colors, { theme } from '../constants/Colors'
 import useColorScheme from '../hooks/useColorScheme'
 import { RootStackParamList, DrawerParamList } from '../../types'
 import LinkingConfiguration from './LinkingConfiguration'
@@ -20,6 +16,29 @@ import CreateEvent from '../screens/CreateEvent'
 
 //
 
+const darkTheme: Theme = {
+  dark: true,
+  colors: {
+    background: theme.colors[800],
+    border: theme.colors[200],
+    card: theme.colors[800],
+    notification: theme.colors[500],
+    primary: theme.colors[500],
+    text: theme.colors[100],
+  },
+}
+const lightTheme: Theme = {
+  dark: false,
+  colors: {
+    background: theme.colors[0],
+    border: theme.colors[700],
+    card: theme.colors[0],
+    notification: theme.colors[500],
+    primary: theme.colors[500],
+    text: theme.colors[700],
+  },
+}
+
 export default function Navigation({
   colorScheme,
 }: {
@@ -28,7 +47,7 @@ export default function Navigation({
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}
+      theme={colorScheme === 'dark' ? darkTheme : lightTheme}
     >
       <RootNavigator />
     </NavigationContainer>
@@ -36,10 +55,6 @@ export default function Navigation({
 }
 
 const headerConfig = {
-  headerStyle: {
-    backgroundColor: '#ccffff',
-  },
-  headerTintColor: '#000000',
   headerTitleAlign: 'center',
   headerTitleStyle: {
     fontWeight: 'bold',
@@ -52,11 +67,11 @@ const Stack = createNativeStackNavigator<RootStackParamList>()
 function RootNavigator() {
   return (
     <Stack.Navigator
-      screenOptions={{
+      screenOptions={() => ({
         ...headerConfig,
         presentation: 'card',
         gestureEnabled: true,
-      }}
+      })}
     >
       <Stack.Screen
         name='Drawer'

@@ -1,4 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet } from 'react-native'
+
+import { Text, View } from '../../components/Themed'
 
 export default function CreateEvent() {
   return (
@@ -13,6 +15,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
   },
 })

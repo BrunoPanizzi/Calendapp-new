@@ -1,5 +1,7 @@
 import { NavigationProp } from '@react-navigation/native'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet } from 'react-native'
+
+import { Text, View } from '../../components/Themed'
 
 export default function Calendar({
   navigation,
@@ -26,7 +28,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
   },
   button: {
     backgroundColor: 'aquamarine',
