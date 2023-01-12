@@ -13,7 +13,7 @@ declare global {
 
 export type RootStackParamList = {
   Drawer: NavigatorScreenParams<DrawerParamList> | undefined
-  Calendar: { title: string }
+  Calendar: { title: string; id: string }
   CreateEvent: undefined
 }
 

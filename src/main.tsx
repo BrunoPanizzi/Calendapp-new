@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { MenuProvider } from 'react-native-popup-menu'
 
 import useCachedResources from './hooks/useCachedResources'
 import useColorScheme from './hooks/useColorScheme'
@@ -16,11 +17,13 @@ export default function App() {
   }
 
   return (
-    <AuthProvider>
-      <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
-        <StatusBar />
-      </SafeAreaProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <MenuProvider>
+          <Navigation colorScheme={colorScheme} />
+          <StatusBar />
+        </MenuProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   )
 }

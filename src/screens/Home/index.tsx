@@ -1,41 +1,25 @@
-import { StyleSheet } from 'react-native'
-import { Text, View } from '../../components/Themed'
+import { StyleSheet, ScrollView } from 'react-native'
 
-import { DrawerScreenProps } from '../../../types'
+import { theme } from '../../constants/Colors'
 
-import Button from '../../components/Button'
+import CalendarsList from './CalendarsList'
+import NewCalendarButton from './NewCalendarButton'
 
-import UserService from '../../services/UserService'
-
-export default function Home({ navigation }: DrawerScreenProps<'Home'>) {
+export default function Home() {
   return (
-    <View style={styles.container}>
-      <Text> this is the home screen</Text>
-      <Button
-        onPress={() => {
-          navigation.navigate('Calendar', {
-            title: 'Calendar',
-          })
-        }}
-      >
-        <Text>Go to the calendar screeen</Text>
-      </Button>
-      <Button onPress={UserService.signOut}>
-        <Text>SignOut</Text>
-      </Button>
-    </View>
+    <>
+      <ScrollView style={styles.container}>
+        <CalendarsList />
+      </ScrollView>
+      <NewCalendarButton />
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: theme.colors[0],
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  button: {
-    backgroundColor: 'aquamarine',
-    padding: 12,
-    marginTop: 16,
+    padding: theme.spacing.medium,
   },
 })
