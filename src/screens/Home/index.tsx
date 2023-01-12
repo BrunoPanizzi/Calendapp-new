@@ -1,15 +1,17 @@
-import { Pressable, StyleSheet } from 'react-native'
-
+import { StyleSheet } from 'react-native'
 import { Text, View } from '../../components/Themed'
 
 import { DrawerScreenProps } from '../../../types'
+
+import Button from '../../components/Button'
+
+import UserService from '../../services/UserService'
 
 export default function Home({ navigation }: DrawerScreenProps<'Home'>) {
   return (
     <View style={styles.container}>
       <Text> this is the home screen</Text>
-      <Pressable
-        style={styles.button}
+      <Button
         onPress={() => {
           navigation.navigate('Calendar', {
             title: 'Calendar',
@@ -17,7 +19,10 @@ export default function Home({ navigation }: DrawerScreenProps<'Home'>) {
         }}
       >
         <Text>Go to the calendar screeen</Text>
-      </Pressable>
+      </Button>
+      <Button onPress={UserService.signOut}>
+        <Text>SignOut</Text>
+      </Button>
     </View>
   )
 }

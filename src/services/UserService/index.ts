@@ -27,10 +27,4 @@ function deleteAccount() {
   return deleteUser(getCurrentUser() as User)
 }
 
-export default {
-  login,
-  createUser,
-  getCurrentUser,
-  signOut,
-  deleteAccount,
-}
+export default { login, createUser, getCurrentUser, signOut, deleteAccount }

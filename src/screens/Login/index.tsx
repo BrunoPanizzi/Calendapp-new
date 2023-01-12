@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native'
-import { Text, View } from '../components/Themed'
+import { Text, View } from '../../components/Themed'
 
-import { theme } from '../constants/Colors'
+import { theme } from '../../constants/Colors'
 import LoginFormContainer from './LoginFormContainer'
 
 export default function Login() {

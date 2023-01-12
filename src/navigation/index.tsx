@@ -1,16 +1,20 @@
 import { NavigationContainer, Theme } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { createDrawerNavigator } from '@react-navigation/drawer'
 import { ColorSchemeName } from 'react-native'
 
 import { theme } from '../constants/Colors'
+
 import { RootStackParamList, DrawerParamList } from '../../types'
+
 import LinkingConfiguration from './LinkingConfiguration'
-import { createDrawerNavigator } from '@react-navigation/drawer'
 
 import Calendar from '../screens/Calendar'
 import Home from '../screens/Home'
 import CreateEvent from '../screens/CreateEvent'
-import Login from '../Login'
+import Login from '../screens/Login'
+
+import { useAuth } from '../context/authContext'
 
 const darkTheme: Theme = {
   dark: true,
@@ -40,14 +44,14 @@ export default function Navigation({
 }: {
   colorScheme: ColorSchemeName
 }) {
-  const isLogged = false
+  const { user } = useAuth()
 
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
       theme={colorScheme === 'dark' ? darkTheme : lightTheme}
     >
-      {isLogged ? <RootNavigator /> : <LoginNavigator />}
+      {user ? <RootNavigator /> : <LoginNavigator />}
     </NavigationContainer>
   )
 }

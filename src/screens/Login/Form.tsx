@@ -1,17 +1,17 @@
 import { useState } from 'react'
 import { StyleSheet } from 'react-native'
-import { Text, View } from '../components/Themed'
+import { Text, View } from '../../components/Themed'
 
-import isEmailValid from '../utils/isEmailValid'
+import isEmailValid from '../../utils/isEmailValid'
 
-import UserService from '../services/UserService'
+import UserService from '../../services/UserService'
 
-import useErrors from '../hooks/useErrors'
+import useErrors from '../../hooks/useErrors'
 
-import { theme } from '../constants/Colors'
+import { theme } from '../../constants/Colors'
 
-import { Input, InputGroup, PasswordInput } from '../components/Inputs'
-import Button from '../components/Button'
+import { Input, InputGroup, PasswordInput } from '../../components/Inputs'
+import Button from '../../components/Button'
 
 type props = {
   mode: 'login' | 'signup'
@@ -80,9 +80,11 @@ export default function Form({ mode }: props) {
         <PasswordInput value={password} onChange={handlePassword} />
       </InputGroup>
       {mode === 'login' && (
-        <Text style={styles.forgotPassword}>Esqueceu sua senha?</Text>
+        <Text darkColor={theme.colors[200]} style={styles.forgotPassword}>
+          Esqueceu sua senha?
+        </Text>
       )}
-      <Button onPress={handleSubmit} loading={loading}>
+      <Button onPress={handleSubmit} width='100%' loading={loading}>
         <Text style={styles.buttonLabel}>
           {mode === 'login' ? 'Login' : 'Criar Conta'}
         </Text>
@@ -102,7 +104,6 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     fontSize: theme.text.small,
-    color: theme.colors[700],
     marginBottom: theme.spacing.small / 2,
   },
 })

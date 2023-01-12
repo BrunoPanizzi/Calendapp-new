@@ -1,4 +1,4 @@
-import { TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native'
+import { Pressable, StyleSheet, ActivityIndicator } from 'react-native'
 
 import { theme } from '../../constants/Colors'
 
@@ -9,6 +9,7 @@ type props = {
   loading?: boolean
   danger?: boolean
   outline?: boolean
+  width?: string | number | undefined
 }
 
 // TODO: fix theming on the button
@@ -19,20 +20,22 @@ export default function Button({
   loading,
   danger,
   outline,
+  width = undefined,
 }: props) {
   const color = danger ? theme.colors.danger : theme.colors[500]
 
   return (
-    <TouchableOpacity
+    <Pressable
       style={[
         styles.button,
+        { width },
         outline
           ? {
               borderColor: color,
-              backgroundColor: color,
             }
           : {
               borderColor: color,
+              backgroundColor: color,
             },
       ]}
       disabled={disabled}
@@ -43,13 +46,12 @@ export default function Button({
       ) : (
         children
       )}
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   button: {
-    width: '100%',
     borderRadius: theme.borderRadius,
     padding: theme.spacing.small,
     alignItems: 'center',
