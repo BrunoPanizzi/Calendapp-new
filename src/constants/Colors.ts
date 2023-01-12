@@ -1,6 +1,3 @@
-const tintColorLight = '#2f95dc'
-const tintColorDark = '#fff'
-
 export const theme = {
   colors: {
     0: '#ecedf9',
