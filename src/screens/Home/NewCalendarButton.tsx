@@ -1,7 +1,11 @@
 import { useState } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity } from 'react-native'
+
+import { View } from '../../components/Themed'
 
 import { theme } from '../../constants/Colors'
+
+import NewCalendarModal from './NewCalendarModal'
 
 export default function NewCalendarButton() {
   const [modalVisible, setModalVisible] = useState(false)
@@ -41,122 +45,4 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: theme.colors[100],
   },
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  contentContainer: {
-    width: '60%',
-    backgroundColor: theme.colors[0],
-    padding: theme.spacing.medium,
-    borderRadius: theme.borderRadius,
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: theme.colors[700],
-    marginBottom: theme.spacing.medium,
-  },
-  buttonLabel: {
-    fontSize: 20,
-    color: theme.colors[0],
-    fontWeight: 'bold',
-  },
 })
-
-///////////////////////////////////
-/////// NEW CALENDAR MODAL ////////
-///////////////////////////////////
-
-import { Text, Modal, Pressable, Keyboard } from 'react-native'
-
-import CalendarService from '../../services/CalendarService'
-
-import useErrors from '../../hooks/useErrors'
-
-import { InputGroup, Input } from '../../components/Inputs'
-import Button from '../../components/Button'
-
-const examples = ['Faculdade', 'Metas pessoais', 'Férias', 'Trabalho']
-
-function NewCalendarModal({
-  visible,
-  onClose,
-}: {
-  visible: boolean
-  onClose: () => void
-}) {
-  const [loading, setLoading] = useState(false)
-  const [name, setName] = useState('')
-
-  const { addError, getErrorMessageByField, removeError } = useErrors()
-
-  const handleNameChange = (newName: string) => {
-    removeError('name')
-    setName(newName)
-    if (!newName)
-      addError({
-        field: 'name',
-        message: 'Escolha um nome para seu calendário',
-      })
-  }
-
-  const handleSubmit = async () => {
-    Keyboard.dismiss()
-    if (!name) {
-      addError({
-        field: 'name',
-        message: 'Escolha um nome para seu calendário',
-      })
-      return
-    }
-    setLoading(true)
-    try {
-      await CalendarService.addCalendar({ title: name })
-      onClose()
-      setName('')
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <Modal
-      animationType='fade'
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}
-      statusBarTranslucent
-    >
-      <Pressable style={styles.overlay} onPress={onClose}>
-        <Pressable
-          style={styles.contentContainer} /* Pressable is the new View */
-        >
-          <Text style={styles.title}>Novo calendário</Text>
-
-          <InputGroup
-            label='Nome'
-            error={!!getErrorMessageByField('name')}
-            errorMessage={getErrorMessageByField('name')}
-          >
-            <Input
-              value={name}
-              onChange={handleNameChange}
-              placeholder={`Ex: ${
-                examples[Math.floor(Math.random() * examples.length)]
-              }`}
-            />
-          </InputGroup>
-          <Button onPress={handleSubmit} loading={loading}>
-            <Text style={styles.buttonLabel}>Criar</Text>
-          </Button>
-        </Pressable>
-      </Pressable>
-    </Modal>
-  )
-}

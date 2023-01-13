@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react'
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native'
+import { StyleSheet, Dimensions, ActivityIndicator } from 'react-native'
 import {
   DocumentData,
   onSnapshot,
   QueryDocumentSnapshot,
 } from 'firebase/firestore'
+import { Text, View } from '../../components/Themed'
 
 import { theme } from '../../constants/Colors'
 
@@ -41,7 +36,13 @@ export default function CalendarsList() {
 
   return (
     <>
-      <Text style={styles.title}>Seus calendários:</Text>
+      <Text
+        style={styles.title}
+        darkColor={theme.colors[100]}
+        lightColor={theme.colors[700]}
+      >
+        Seus calendários:
+      </Text>
       {!loading ? (
         <View style={styles.calendarsContainer}>
           {calendars.map((calendar) => (
@@ -64,7 +65,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: theme.colors[700],
     marginBottom: theme.spacing.small,
   },
   calendarsContainer: {

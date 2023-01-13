@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native'
+import { TouchableOpacity, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { FontAwesome5 } from '@expo/vector-icons'
+import { Pressable, Text, View } from '../../components/Themed'
 import {
   Menu,
   MenuOption,
@@ -15,7 +16,9 @@ import { theme } from '../../constants/Colors'
 
 import CalendarComp from '../../components/CalendarComp'
 import DangerModal from '../../components/DangerModal'
+
 import { calendar } from '../../services/CalendarService/types'
+import useColorScheme from '../../hooks/useColorScheme'
 
 type props = {
   calendar: calendar
@@ -24,26 +27,37 @@ type props = {
 }
 
 export default function SmallCalendar({ calendar, id, width }: props) {
+  const colorScheme = useColorScheme()
   const navigation = useNavigation()
   const [dangerModalVisible, setDangerModalVisible] = useState(false)
 
   const deleteCalendar = async () => await CalendarService.deleteCalendar(id)
 
   return (
-    <TouchableOpacity
+    <Pressable
       style={[styles.calendarContainer, { width }]}
       onPress={() =>
         navigation.navigate('Calendar', { id, title: calendar.title })
       }
+      darkColor={theme.colors[600]}
+      lightColor={theme.colors[100]}
     >
       <View style={styles.header}>
-        <Text style={styles.text}>{calendar.title}</Text>
+        <Text
+          style={styles.text}
+          darkColor={theme.colors[0]}
+          lightColor={theme.colors[700]}
+        >
+          {calendar.title}
+        </Text>
         <Menu>
           <MenuTrigger>
             <FontAwesome5
               name='ellipsis-v'
               size={16}
-              color={theme.colors[600]}
+              color={
+                colorScheme === 'light' ? theme.colors[600] : theme.colors[200]
+              }
             />
           </MenuTrigger>
           <MenuOptions>
@@ -63,23 +77,22 @@ export default function SmallCalendar({ calendar, id, width }: props) {
         />
       </View>
       <CalendarComp compact calendar={calendar} />
-    </TouchableOpacity>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   calendarContainer: {
-    backgroundColor: theme.colors[100],
     marginBottom: theme.spacing.medium,
     padding: theme.spacing.medium,
     borderRadius: theme.bigBorderRadius,
   },
   text: {
-    color: theme.colors[700],
     fontWeight: 'bold',
     fontSize: 16,
   },
   header: {
+    backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

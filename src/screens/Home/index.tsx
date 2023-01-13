@@ -1,4 +1,5 @@
-import { StyleSheet, ScrollView } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { ScrollView } from '../../components/Themed'
 
 import { theme } from '../../constants/Colors'
 
@@ -18,7 +19,6 @@ export default function Home() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.colors[0],
     flex: 1,
     padding: theme.spacing.medium,
   },

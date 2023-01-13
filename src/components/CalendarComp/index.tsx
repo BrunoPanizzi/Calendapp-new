@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
-import { StyleSheet, View } from 'react-native'
-import propTypes from 'prop-types'
+import { StyleSheet } from 'react-native'
+import { View } from '../Themed'
 
 import { theme } from '../../constants/Colors'
 
@@ -68,21 +68,9 @@ export default function CalendarComp({ compact, calendar }: props) {
   )
 }
 
-CalendarComp.propTypes = {
-  compact: propTypes.bool,
-  calendar: propTypes.object.isRequired,
-}
-
-CalendarComp.defaultProps = {
-  compact: false,
-}
-
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: theme.borderRadius,
-    backgroundColor: theme.colors[100],
-  },
   days: {
+    backgroundColor: 'transparent',
     width: '100%',
     flexDirection: 'row',
     flexWrap: 'wrap',

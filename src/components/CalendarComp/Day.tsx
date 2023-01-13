@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Pressable } from 'react-native'
-import propTypes from 'prop-types'
+import { StyleSheet } from 'react-native'
+import { Text, View, Pressable } from '../Themed'
 
 import { useCalendar } from '../../context/calendarContext'
 
@@ -60,6 +60,7 @@ export default function Day({ events, day, isThisMonth, compact }: props) {
     <Pressable
       disabled={compact}
       style={[styles.day, isSelected && styles.selectedDay, { borderRadius }]}
+      lightColor='transparent'
       onPress={() => setSelectedDay(day)}
     >
       <View style={[styles.events, { borderRadius, opacity: 0.5 }]}>
@@ -133,6 +134,7 @@ const styles = StyleSheet.create({
   },
   events: {
     width: '100%',
+    backgroundColor: 'transparent',
     flex: 1,
     borderRadius: theme.borderRadius,
     overflow: 'hidden',
@@ -154,6 +156,7 @@ const styles = StyleSheet.create({
   },
   longEvent: {
     position: 'absolute',
+    backgroundColor: 'transparent',
     top: 0,
     left: 0,
     bottom: 0,

@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet } from 'react-native'
+import { Text, View } from '../Themed'
 
 import { theme } from '../../constants/Colors'
 
@@ -19,7 +20,13 @@ export default function InputGroup({
 }: props) {
   return (
     <View style={[styles.container, { width }]}>
-      <Text style={styles.label}>{label}</Text>
+      <Text
+        style={styles.label}
+        darkColor={theme.colors[100]}
+        lightColor={theme.colors[800]}
+      >
+        {label}
+      </Text>
       <View style={[styles.border, error && styles.borderDanger]}>
         {children}
       </View>
@@ -33,11 +40,11 @@ export default function InputGroup({
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+    backgroundColor: 'transparent',
   },
   label: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: theme.colors[800],
     marginBottom: 4,
   },
   errorLabel: {
