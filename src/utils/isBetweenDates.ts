@@ -1,8 +1,12 @@
 export default function isBetweenDates(
-  start: Date | number,
-  end: Date | number,
-  date: Date | number
+  start: Date | number | null,
+  end: Date | number | null,
+  date: Date | number | null
 ) {
+  if (start === null || end === null || date === null) {
+    return false
+  }
+
   let s = new Date(start)
   let e = new Date(end)
   let d = new Date(date)

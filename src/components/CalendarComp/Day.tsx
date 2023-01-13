@@ -13,7 +13,7 @@ type props = {
   events: any[] // TODO: do i have to explain
   day: Date
   isThisMonth: boolean
-  compact: boolean
+  compact?: boolean
 }
 // TODO useMemo some stuff for performance
 export default function Day({ events, day, isThisMonth, compact }: props) {
@@ -23,6 +23,7 @@ export default function Day({ events, day, isThisMonth, compact }: props) {
   if (!compact) {
     const r = useCalendar()!
     selectedDay = r.selectedDay
+    setSelectedDay = r.setSelectedDay
   }
 
   const isSelected = isSameDay(selectedDay, day)

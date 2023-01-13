@@ -14,7 +14,7 @@ declare global {
 export type RootStackParamList = {
   Drawer: NavigatorScreenParams<DrawerParamList> | undefined
   Calendar: { title: string; id: string }
-  CreateEvent: undefined
+  CreateEvent: { calendarId: string }
 }
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

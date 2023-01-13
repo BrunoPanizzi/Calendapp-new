@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   Dispatch,
   SetStateAction,
@@ -16,7 +16,7 @@ export const calendarContext = createContext<calendarContext | null>(null)
 export default function CalendarProvider({
   children,
 }: {
-  children: JSX.Element
+  children: React.ReactNode
 }) {
   const [selectedDay, setSelectedDay] = useState<Date | null>(null)
 

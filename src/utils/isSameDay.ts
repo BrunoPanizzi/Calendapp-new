@@ -1,4 +1,11 @@
-export default function isSameDay(date1: Date | number, date2: Date | number) {
+export default function isSameDay(
+  date1: Date | number | null,
+  date2: Date | number | null
+) {
+  if (date1 === null || date2 === null) {
+    return false
+  }
+
   const d1 = new Date(date1)
   const d2 = new Date(date2)
 

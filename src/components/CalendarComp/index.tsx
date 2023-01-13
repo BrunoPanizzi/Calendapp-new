@@ -10,8 +10,8 @@ import Header from './Header'
 import { calendar } from '../../services/CalendarService/types'
 
 type props = {
-  compact: boolean
   calendar: calendar
+  compact?: boolean
 }
 // TODO: big ass code review for this thing
 export default function CalendarComp({ compact, calendar }: props) {
@@ -31,7 +31,7 @@ export default function CalendarComp({ compact, calendar }: props) {
         return (
           <Day
             compact={compact}
-            events={calendar.events || []}
+            events={calendar?.events || []}
             key={Math.random()}
             day={currentDay}
             isThisMonth={currentDay.getMonth() === month.getMonth()}
