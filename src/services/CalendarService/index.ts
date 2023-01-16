@@ -31,7 +31,7 @@ function getCalendar(id: string) {
   return doc(db, `calendars/${id}`)
 }
 
-function addEvent(calendarId: string, eventDetails: event) {
+function addEvent(calendarId: string, eventDetails: Omit<event, 'creatorId'>) {
   const calendarRef = doc(db, `calendars/${calendarId}`)
   return updateDoc(calendarRef, {
     events: arrayUnion({
@@ -40,7 +40,10 @@ function addEvent(calendarId: string, eventDetails: event) {
     }),
   })
 }
-function deleteEvent(calendarId: string, eventDetails: event) {
+function deleteEvent(
+  calendarId: string,
+  eventDetails: Omit<event, 'creatorId'>
+) {
   const calendarRef = doc(db, `calendars/${calendarId}`)
   const thing = {
     ...eventDetails,

@@ -1,3 +1,4 @@
+import { date } from './date'
 import isSameDay from './isSameDay'
 
 function fixNumber(n: number) {
@@ -5,7 +6,7 @@ function fixNumber(n: number) {
   return ('0' + n).slice(-2)
 }
 
-function parseDate(date: Date | number | null, showYear = true) {
+function parseDate(date: date, showYear = true) {
   if (!date) return null
 
   const today = new Date()
@@ -20,7 +21,7 @@ function parseDate(date: Date | number | null, showYear = true) {
   return `${day}/${month}${showYear ? '/' + year : ''}`
 }
 
-function parseTime(date: Date | number | null) {
+function parseTime(date: date) {
   if (!date) return null
 
   const myDate = new Date(date)

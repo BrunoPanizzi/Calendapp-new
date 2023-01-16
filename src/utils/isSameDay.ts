@@ -1,8 +1,7 @@
-export default function isSameDay(
-  date1: Date | number | null,
-  date2: Date | number | null
-) {
-  if (date1 === null || date2 === null) {
+import { date } from './date'
+
+export default function isSameDay(date1: date, date2: date) {
+  if (!date1 || !date2) {
     return false
   }
 

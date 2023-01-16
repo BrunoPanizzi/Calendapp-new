@@ -1,9 +1,7 @@
-export default function isBetweenDates(
-  start: Date | number | null,
-  end: Date | number | null,
-  date: Date | number | null
-) {
-  if (start === null || end === null || date === null) {
+import { date } from './date'
+
+export default function isBetweenDates(start: date, end: date, date: date) {
+  if (!start || !end || !date) {
     return false
   }
 
