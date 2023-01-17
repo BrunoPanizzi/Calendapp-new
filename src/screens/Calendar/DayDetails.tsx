@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
+import { format, isSameDay } from 'date-fns'
 
-import { parseDate } from '../../utils/parseDate'
-import isSameDay from '../../utils/isSameDay'
 import isBetweenDates from '../../utils/isBetweenDates'
 
 import { useCalendar } from '../../context/calendarContext'
@@ -19,7 +18,9 @@ export default function DayDetails({ events }: props) {
   let eventsOnDate: any[] = []
   events.forEach((e: any) => {
     if (e.type === 'single') {
-      isSameDay(e.start, selectedDay) && eventsOnDate.push(e)
+      if (isSameDay(e.start, selectedDay!)) {
+        eventsOnDate.push(e)
+      }
     } else if (isBetweenDates(e.start, e.end, selectedDay)) {
       eventsOnDate.push(e)
     }
@@ -28,7 +29,7 @@ export default function DayDetails({ events }: props) {
   return (
     <>
       <Text style={styles.title}>
-        {selectedDay ? parseDate(selectedDay) : 'Selecione um dia'}
+        {selectedDay ? format(selectedDay, 'dd/MM/yyyy') : 'Selecione um dia'}
       </Text>
       {eventsOnDate.length ? (
         <View style={styles.info}>

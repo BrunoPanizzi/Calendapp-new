@@ -8,9 +8,8 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker'
 
-import { parseDate, parseTime } from '../../utils/parseDate'
-
 import { theme } from '../../constants/Colors'
+import { format } from 'date-fns'
 
 type props = {
   date: Date | undefined
@@ -73,7 +72,7 @@ export default function DateSelector({
             color: theme.colors[hasBeenEdited ? 800 : 200],
           }}
         >
-          {hasBeenEdited ? parseDate(date) : placeholder}
+          {hasBeenEdited ? format(date!, 'dd/MM/yyyy') : placeholder}
         </Text>
         <Text
           style={{
@@ -81,7 +80,7 @@ export default function DateSelector({
             color: theme.colors[hasBeenEdited ? 800 : 200],
           }}
         >
-          {hasBeenEdited && parseTime(date)}
+          {hasBeenEdited && format(date!, 'HH:mm')}
         </Text>
       </TouchableOpacity>
     </>

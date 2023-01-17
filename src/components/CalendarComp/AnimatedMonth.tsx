@@ -1,45 +1,28 @@
 import { useRef, useEffect, useState } from 'react'
 import { StyleSheet, View, Animated } from 'react-native'
-import propTypes from 'prop-types'
 
 import { theme } from '../../constants/Colors'
+import { addMonths } from 'date-fns/esm'
+import { format } from 'date-fns'
 
-const meses = [
-  'jan',
-  'fev',
-  'mar',
-  'abr',
-  'mai',
-  'jun',
-  'jul',
-  'ago',
-  'set',
-  'out',
-  'nov',
-  'dez',
-]
+type props = { currDate: Date }
 
-export default function AnimatedMonth({ currDate }: { currDate: Date }) {
-  const [prevMonth, setPrevMonth] = useState(
-    new Date(currDate.getFullYear(), currDate.getMonth() - 1)
-  )
-  const [midMonth, setMidMonth] = useState(new Date(currDate))
-  const [nextMonth, setNextMonth] = useState(
-    new Date(currDate.getFullYear(), currDate.getMonth() + 1)
-  )
+export default function AnimatedMonth({ currDate = new Date() }: props) {
+  const [prevMonth, setPrevMonth] = useState(addMonths(currDate, -1))
+  const [midMonth, setMidMonth] = useState(currDate)
+  const [nextMonth, setNextMonth] = useState(addMonths(currDate, 1))
 
   const leftAnim = useRef(new Animated.Value(-50)).current
   const midAnim = useRef(new Animated.Value(0)).current
   const rightAnim = useRef(new Animated.Value(50)).current
 
   const resetValues = () => {
-    // resets every state and animation value
     leftAnim.setValue(-50)
     midAnim.setValue(0)
     rightAnim.setValue(50)
-    setPrevMonth(new Date(currDate.getFullYear(), currDate.getMonth() - 1))
-    setMidMonth(new Date(currDate))
-    setNextMonth(new Date(currDate.getFullYear(), currDate.getMonth() + 1))
+    setPrevMonth(addMonths(currDate, -1))
+    setMidMonth(currDate)
+    setNextMonth(addMonths(currDate, +1))
   }
 
   const prevMonthAnim = () => {
@@ -100,7 +83,7 @@ export default function AnimatedMonth({ currDate }: { currDate: Date }) {
           },
         ]}
       >
-        {meses[prevMonth.getMonth()]}, {prevMonth.getFullYear()}
+        {format(prevMonth, 'MMM, yyyy')}
       </Animated.Text>
 
       <Animated.Text // current month
@@ -115,7 +98,7 @@ export default function AnimatedMonth({ currDate }: { currDate: Date }) {
           },
         ]}
       >
-        {meses[midMonth.getMonth()]}, {midMonth.getFullYear()}
+        {format(midMonth, 'MMM, yyyy')}
       </Animated.Text>
 
       <Animated.Text // next month
@@ -130,14 +113,10 @@ export default function AnimatedMonth({ currDate }: { currDate: Date }) {
           },
         ]}
       >
-        {meses[nextMonth.getMonth()]}, {nextMonth.getFullYear()}
+        {format(nextMonth, 'MMM, yyyy')}
       </Animated.Text>
     </View>
   )
-}
-
-AnimatedMonth.propTypes = {
-  currDate: propTypes.instanceOf(Date).isRequired,
 }
 
 const styles = StyleSheet.create({

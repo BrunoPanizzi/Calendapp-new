@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { isSameDay } from 'date-fns'
 
 import DateSelector from '../../components/DateSelector'
 import ColorSelection from '../../components/ColorSelector'
@@ -14,8 +15,6 @@ import Button from '../../components/Button'
 import { theme } from '../../constants/Colors'
 
 import { RootStackScreenProps } from '../../../types'
-import isSameDay from '../../utils/isSameDay'
-import { date } from '../../utils/date'
 
 export default function CreateEvent({
   route,
@@ -83,7 +82,7 @@ export default function CreateEvent({
         title: eventName,
         colorHue: color,
         description,
-        type: isSameDay(start, end) || !end ? 'single' : 'span',
+        type: isSameDay(start, end!) || !end ? 'single' : 'span',
         start: start?.valueOf(),
         end: end ? end.valueOf() : null, // firestore things, it doesn't understand `undefined`, just `null`
       })

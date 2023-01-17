@@ -8,12 +8,11 @@ import {
   MenuOptions,
   MenuTrigger,
 } from 'react-native-popup-menu'
+import { format } from 'date-fns'
 
 import useColorScheme from '../../hooks/useColorScheme'
 
 import CalendarService from '../../services/CalendarService'
-
-import { parseDate, parseTime } from '../../utils/parseDate'
 
 import { theme } from '../../constants/Colors'
 
@@ -68,10 +67,13 @@ export default function Event({ event }: props) {
       <View style={styles.rows}>
         <View style={[styles.half, { marginRight: theme.spacing.small }]}>
           <Text style={{ marginBottom: 2 }}>
-            Início: {`${parseDate(start, false)}, ${parseTime(start)}`}
+            Início:{' '}
+            {`${format(start, 'dd/MM/yyyy')}, ${format(start, 'HH:mm')}`}
           </Text>
           {end && (
-            <Text>Fim: {`${parseDate(end, false)}, ${parseTime(end)}`}</Text>
+            <Text>
+              Fim: {`${format(end, 'dd/MM/yyyy')}, ${format(end, 'HH:mm')}`}
+            </Text>
           )}
         </View>
         <View style={styles.half}>

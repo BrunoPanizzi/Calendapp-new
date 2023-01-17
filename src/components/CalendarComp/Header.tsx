@@ -1,16 +1,18 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Entypo } from '@expo/vector-icons'
-import propTypes from 'prop-types'
 
 import { theme } from '../../constants/Colors'
 
 import AnimatedMonth from './AnimatedMonth'
+
+const weekDays = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']
 
 type props = {
   currDate: Date
   previousMonth: () => void
   nextMonth: () => void
 }
+
 export default function Header({ currDate, previousMonth, nextMonth }: props) {
   const arrowConfig = {
     size: theme.spacing.large,
@@ -31,36 +33,14 @@ export default function Header({ currDate, previousMonth, nextMonth }: props) {
         </TouchableOpacity>
       </View>
       <View style={styles.weekDays}>
-        <Text key={0} style={styles.day}>
-          D
-        </Text>
-        <Text key={1} style={styles.day}>
-          S
-        </Text>
-        <Text key={2} style={styles.day}>
-          T
-        </Text>
-        <Text key={3} style={styles.day}>
-          Q
-        </Text>
-        <Text key={4} style={styles.day}>
-          Q
-        </Text>
-        <Text key={5} style={styles.day}>
-          S
-        </Text>
-        <Text key={6} style={styles.day}>
-          S
-        </Text>
+        {weekDays.map((day, i) => (
+          <Text style={styles.day} key={i}>
+            {day}
+          </Text>
+        ))}
       </View>
     </>
   )
-}
-
-Header.propTypes = {
-  currDate: propTypes.instanceOf(Date).isRequired,
-  previousMonth: propTypes.func.isRequired,
-  nextMonth: propTypes.func.isRequired,
 }
 
 const styles = StyleSheet.create({

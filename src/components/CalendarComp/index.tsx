@@ -2,7 +2,15 @@ import { useState, useMemo } from 'react'
 import { StyleSheet } from 'react-native'
 import { View } from '../Themed'
 
-import { theme } from '../../constants/Colors'
+import {
+  startOfMonth,
+  startOfWeek,
+  endOfWeek,
+  endOfMonth,
+  eachDayOfInterval,
+  addMonths,
+  isSameMonth,
+} from 'date-fns'
 
 import Day from './Day'
 import Header from './Header'
@@ -13,57 +21,42 @@ type props = {
   calendar: calendar
   compact?: boolean
 }
-// TODO: big ass code review for this thing
 export default function CalendarComp({ compact, calendar }: props) {
-  const today = new Date()
-  const [month, setMonth] = useState(
-    new Date(today.getFullYear(), today.getMonth())
-  )
+  const [month, setMonth] = useState(startOfMonth(Date.now()))
 
-  const daysArr = useMemo(() => {
-    // timestamp to the first day of the calendar
-    const calendarStart = month.valueOf() - month.getDay() * 24 * 60 * 60 * 1000
+  const daysThisMonth = useMemo(() => {
+    const calendarStart = startOfWeek(month).valueOf()
+    const calendarEnd = endOfWeek(endOfMonth(month)).valueOf()
 
-    let assistArr = Array(42)
-      .fill('')
-      .map((_, i) => {
-        const currentDay = new Date(calendarStart + 24 * 60 * 60 * 1000 * i)
-        return (
-          <Day
-            compact={compact}
-            events={calendar?.events || []}
-            key={Math.random()}
-            day={currentDay}
-            isThisMonth={currentDay.getMonth() === month.getMonth()}
-          />
-        )
-      })
+    return eachDayOfInterval({
+      start: calendarStart,
+      end: calendarEnd,
+    })
+  }, [month])
 
-    return assistArr
-  }, [month, calendar])
-
-  const nextMonth = () => {
-    setMonth(
-      (prevMonth) => new Date(prevMonth.getFullYear(), prevMonth.getMonth() + 1)
-    )
-  }
-
-  const previousMonth = () => {
-    setMonth(
-      (prevMonth) => new Date(prevMonth.getFullYear(), prevMonth.getMonth() - 1)
-    )
-  }
+  const handleNextMonth = () => setMonth(addMonths(month, 1))
+  const handlePreviousMonth = () => setMonth(addMonths(month, -1))
 
   return (
     <>
       {!compact && (
         <Header
           currDate={month}
-          previousMonth={previousMonth}
-          nextMonth={nextMonth}
+          previousMonth={handlePreviousMonth}
+          nextMonth={handleNextMonth}
         />
       )}
-      <View style={styles.days}>{daysArr}</View>
+      <View style={styles.days}>
+        {daysThisMonth.map((day) => (
+          <Day
+            compact={compact}
+            events={calendar?.events || []}
+            key={Math.random()}
+            day={day}
+            isThisMonth={isSameMonth(day, month)}
+          />
+        ))}
+      </View>
     </>
   )
 }

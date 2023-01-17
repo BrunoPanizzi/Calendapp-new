@@ -1,13 +1,12 @@
 import { StyleSheet } from 'react-native'
 import { Text, View, Pressable } from '../Themed'
+import { Dispatch, memo, SetStateAction } from 'react'
+import { isSameDay, isToday } from 'date-fns'
 
 import { useCalendar } from '../../context/calendarContext'
 
-import isSameDay from '../../utils/isSameDay'
-import isBetweenDates from '../../utils/isBetweenDates'
-
 import { theme } from '../../constants/Colors'
-import { Dispatch, SetStateAction } from 'react'
+import isBetweenDates from '../../utils/isBetweenDates'
 
 type props = {
   events: any[] // TODO: do i have to explain
@@ -16,7 +15,7 @@ type props = {
   compact?: boolean
 }
 // TODO useMemo some stuff for performance
-export default function Day({ events, day, isThisMonth, compact }: props) {
+function Day({ events, day, isThisMonth, compact }: props) {
   let selectedDay: any // TODO: yes i'm lazy
   let setSelectedDay: Dispatch<SetStateAction<typeof selectedDay>>
 
@@ -27,7 +26,7 @@ export default function Day({ events, day, isThisMonth, compact }: props) {
   }
 
   const isSelected = isSameDay(selectedDay, day)
-  const isToday = isSameDay(day, Date.now())
+  const today = isToday(day)
 
   const fontSize = compact ? 10 : 16
   const borderRadius = compact ? 4 : theme.borderRadius
@@ -52,7 +51,7 @@ export default function Day({ events, day, isThisMonth, compact }: props) {
 
     // add borderStyle to event object, used to style the border of the component
     event.borderStyle = borderStyle
-    event.isEventSelected = isBetweenDates(event.start, event.end, selectedDay)
+    event.isEventSelected = isBetweenDates(event.start, event.end, day)
 
     return event
   })
@@ -60,7 +59,7 @@ export default function Day({ events, day, isThisMonth, compact }: props) {
   return (
     <Pressable
       disabled={compact}
-      style={[styles.day, isSelected && styles.selectedDay, { borderRadius }]}
+      style={makeContainerStyles(isSelected, compact)}
       lightColor='transparent'
       onPress={() => setSelectedDay(day)}
     >
@@ -94,7 +93,7 @@ export default function Day({ events, day, isThisMonth, compact }: props) {
           styles.text,
           isThisMonth ? styles.textInMonth : styles.textNotInMonth,
           { fontSize },
-          isToday && {
+          today && {
             color: theme.colors[500],
             transform: [{ scale: 1.4 }],
           },
@@ -104,6 +103,18 @@ export default function Day({ events, day, isThisMonth, compact }: props) {
       </Text>
     </Pressable>
   )
+}
+export default memo(Day)
+
+function makeContainerStyles(
+  isSelected: boolean = false,
+  compact: boolean = false
+) {
+  return {
+    ...styles.day,
+    borderRadius: compact ? 4 : theme.borderRadius,
+    backgroundColor: isSelected ? theme.colors[0] : 'transparent',
+  }
 }
 
 const styles = StyleSheet.create({
@@ -116,10 +127,6 @@ const styles = StyleSheet.create({
     width: 100 / 7 + '%',
     aspectRatio: 1,
     padding: '2%',
-  },
-  selectedDay: {
-    backgroundColor: theme.colors[0],
-    borderRadius: 8,
   },
   text: {
     position: 'absolute',

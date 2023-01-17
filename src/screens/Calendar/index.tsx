@@ -36,12 +36,7 @@ export default function Calendar({ route }: RootStackScreenProps<'Calendar'>) {
         contentContainerStyle={{ padding: theme.spacing.medium }}
       >
         <CalendarProvider>
-          <View
-            style={[
-              styles.contentContainer,
-              { marginBottom: theme.spacing.medium },
-            ]}
-          >
+          <View style={styles.contentContainer}>
             <CalendarComp calendar={calendarInfo!} />
           </View>
           <View style={styles.contentContainer}>
@@ -62,7 +57,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors[0],
     flex: 1,
-    // padding: theme.spacing.medium
   },
   contentContainer: {
     width: '100%',
@@ -70,5 +64,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors[100],
     padding: theme.spacing.medium,
     borderRadius: theme.bigBorderRadius,
+    marginBottom: theme.spacing.medium,
   },
 })
