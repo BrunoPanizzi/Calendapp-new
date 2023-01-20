@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, Platform } from 'react-native'
+import { format } from 'date-fns'
 // TODO: maybe take a look at this package
 // https://www.npmjs.com/package/react-native-date-picker
 // also this one:
@@ -9,14 +10,13 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker'
 
 import { theme } from '../../constants/Colors'
-import { format } from 'date-fns'
 
 type props = {
   date: Date | undefined
-  setDate: any
+  setDate: (date: Date | undefined) => void
   placeholder: any
   minDate: Date | undefined
-  onRequestOpen: () => void
+  onRequestOpen: () => boolean
 }
 
 export default function DateSelector({
@@ -27,27 +27,29 @@ export default function DateSelector({
   onRequestOpen,
 }: props) {
   const [hasBeenEdited, setHasBeenEdited] = useState(false)
-  const [mode, setMode] = useState<'countdown' | 'date' | 'datetime' | 'time'>(
+  const [mode, setMode] = useState<'date' | 'datetime' | 'time' | undefined>(
     Platform.OS === 'ios' ? 'datetime' : 'date'
   )
   const [show, setShow] = useState(false)
 
   const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
     setShow(false)
-    if (event.type === 'dismissed') return
 
-    setHasBeenEdited(true)
+    if (event.type === 'dismissed') {
+      return
+    }
+
     setDate(selectedDate)
-    if (mode === 'date') {
+    setHasBeenEdited(true)
+    if (mode === 'date' && Platform.OS === 'android') {
       setMode('time')
       setShow(true)
     }
   }
 
   const handleOpenDatepicker = () => {
-    console.log('dumbass trying to open shit')
-    // const shouldOpen = onRequestOpen ? onRequestOpen() : true
-    // if (!shouldOpen) return
+    const shouldOpen = onRequestOpen()
+    if (!shouldOpen) return
 
     Platform.OS === 'android' && setMode('date')
     setShow(true)
@@ -59,7 +61,7 @@ export default function DateSelector({
         <DateTimePicker
           minimumDate={minDate}
           value={date || new Date()}
-          mode={mode as any} // idc anymore
+          mode={mode as any}
           is24Hour={true}
           onChange={onChange}
         />

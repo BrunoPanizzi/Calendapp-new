@@ -25,8 +25,8 @@ export default function CalendarComp({ compact, calendar }: props) {
   const [month, setMonth] = useState(startOfMonth(Date.now()))
 
   const daysThisMonth = useMemo(() => {
-    const calendarStart = startOfWeek(month).valueOf()
-    const calendarEnd = endOfWeek(endOfMonth(month)).valueOf()
+    const calendarStart = startOfWeek(month)
+    const calendarEnd = endOfWeek(endOfMonth(month))
 
     return eachDayOfInterval({
       start: calendarStart,

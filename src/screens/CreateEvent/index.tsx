@@ -37,7 +37,7 @@ export default function CreateEvent({
     }
   }
 
-  const handleSetStart = (date: Date) => {
+  const handleSetStart = (date: Date | undefined) => {
     removeError('start')
     removeError('end')
     setStart(date)
@@ -124,10 +124,10 @@ export default function CreateEvent({
         >
           <DateSelector
             placeholder='Escolha uma data'
-            onRequestOpen={() => null}
+            onRequestOpen={() => true}
             date={start}
             setDate={handleSetStart}
-            minDate={new Date(Date.now())}
+            minDate={new Date()}
           />
         </InputGroup>
         <InputGroup
@@ -139,7 +139,7 @@ export default function CreateEvent({
           <DateSelector
             placeholder='Escolha uma data'
             date={end}
-            setDate={setEnd}
+            setDate={(date) => setEnd(date)}
             minDate={start}
             onRequestOpen={handleOpenEndSelector}
           />
