@@ -17,6 +17,7 @@ type props = {
   placeholder: any
   minDate: Date | undefined
   onRequestOpen: () => boolean
+  onlyDate?: boolean
 }
 
 export default function DateSelector({
@@ -25,10 +26,16 @@ export default function DateSelector({
   placeholder,
   minDate,
   onRequestOpen,
+  onlyDate,
 }: props) {
-  const [hasBeenEdited, setHasBeenEdited] = useState(false)
+  const [hasBeenEdited, setHasBeenEdited] = useState(Boolean(date))
   const [mode, setMode] = useState<'date' | 'datetime' | 'time' | undefined>(
-    Platform.OS === 'ios' ? 'datetime' : 'date'
+    () => {
+      if (onlyDate) {
+        return 'date'
+      }
+      return Platform.OS === 'ios' ? 'datetime' : 'date'
+    }
   )
   const [show, setShow] = useState(false)
 
@@ -41,7 +48,7 @@ export default function DateSelector({
 
     setDate(selectedDate)
     setHasBeenEdited(true)
-    if (mode === 'date' && Platform.OS === 'android') {
+    if (mode === 'date' && Platform.OS === 'android' && !onlyDate) {
       setMode('time')
       setShow(true)
     }
@@ -76,14 +83,16 @@ export default function DateSelector({
         >
           {hasBeenEdited ? format(date!, 'dd/MM/yyyy') : placeholder}
         </Text>
-        <Text
-          style={{
-            fontSize: theme.text.normal,
-            color: theme.colors[hasBeenEdited ? 800 : 200],
-          }}
-        >
-          {hasBeenEdited && format(date!, 'HH:mm')}
-        </Text>
+        {!onlyDate && (
+          <Text
+            style={{
+              fontSize: theme.text.normal,
+              color: theme.colors[hasBeenEdited ? 800 : 200],
+            }}
+          >
+            {hasBeenEdited && format(date!, 'HH:mm')}
+          </Text>
+        )}
       </TouchableOpacity>
     </>
   )

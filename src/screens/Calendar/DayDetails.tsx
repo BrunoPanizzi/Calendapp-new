@@ -17,7 +17,7 @@ export default function DayDetails({ events }: props) {
 
   let eventsOnDate: any[] = []
   events.forEach((e: any) => {
-    if (e.type === 'single') {
+    if (e.type === 'single' || e.type === 'fullDay') {
       if (isSameDay(e.start, selectedDay!)) {
         eventsOnDate.push(e)
       }

@@ -28,10 +28,34 @@ export default function Event({ event }: props) {
   const colorScheme = useColorScheme()
 
   const { title, colorHue, description, start, end, type } = event
-  const originalEvent = { title, colorHue, description, start, end, type }
+  let originalEvent: any = {
+    title,
+    colorHue,
+    description,
+    start,
+    type,
+  }
+  if (end) {
+    // weird hack to make sure that firebase can delete the event
+    originalEvent.end = end
+  }
   const [dangerModalVisible, setDangerModalVisible] = useState(false)
 
   const { id } = useRoute().params as { id: string }
+
+  const startText = () => {
+    let text = `Início: ${format(start, 'dd/MM/yyyy')}`
+    if (type === 'fullDay') {
+      return text
+    }
+    return text + `, ${format(start, 'HH:mm')}`
+  }
+  const endText = () => {
+    if (!end) {
+      return
+    }
+    return `Fim: ${format(end!, 'dd/MM/yyyy')}, ${format(end!, 'HH:mm')}`
+  }
 
   return (
     <TouchableOpacity
@@ -66,15 +90,8 @@ export default function Event({ event }: props) {
       </View>
       <View style={styles.rows}>
         <View style={[styles.half, { marginRight: theme.spacing.small }]}>
-          <Text style={{ marginBottom: 2 }}>
-            Início:{' '}
-            {`${format(start, 'dd/MM/yyyy')}, ${format(start, 'HH:mm')}`}
-          </Text>
-          {end && (
-            <Text>
-              Fim: {`${format(end, 'dd/MM/yyyy')}, ${format(end, 'HH:mm')}`}
-            </Text>
-          )}
+          <Text style={{ marginBottom: 2 }}>{startText()}</Text>
+          {end && <Text>{endText()}</Text>}
         </View>
         <View style={styles.half}>
           <Text

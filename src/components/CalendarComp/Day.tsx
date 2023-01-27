@@ -31,7 +31,7 @@ function Day({ events, day, isThisMonth, compact }: props) {
   const fontSize = compact ? 10 : 16
   const borderRadius = compact ? 4 : theme.borderRadius
   const eventsThisDay = events.filter(
-    (e) => e.type === 'single' && isSameDay(e.start, day)
+    (e) => e.type !== 'span' && isSameDay(e.start, day)
   )
 
   let longEvents = events.filter(

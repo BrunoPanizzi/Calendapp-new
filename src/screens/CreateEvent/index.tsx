@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { startTransition, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { isSameDay } from 'date-fns'
 
@@ -15,6 +15,9 @@ import Button from '../../components/Button'
 import { theme } from '../../constants/Colors'
 
 import { RootStackScreenProps } from '../../../types'
+import Toggle from '../../components/Toggle'
+import ToggleGroup from '../../components/Toggle/ToggleGroup'
+import { event } from '../../services/CalendarService/types'
 
 export default function CreateEvent({
   route,
@@ -25,6 +28,7 @@ export default function CreateEvent({
 
   const [eventName, setEventName] = useState('')
   const [description, setDescription] = useState('')
+  const [isFullDay, setIsFullDay] = useState(true)
   const [start, setStart] = useState<Date>()
   const [end, setEnd] = useState<Date>()
   const [color, setColor] = useState<number>()
@@ -63,12 +67,6 @@ export default function CreateEvent({
         message: 'Escolha um nome para o evento',
       })
     }
-    if (!start) {
-      return addError({
-        field: 'start',
-        message: 'Selecione uma data de inicio',
-      })
-    }
     if (!color) {
       return addError({
         field: 'color',
@@ -76,16 +74,25 @@ export default function CreateEvent({
       })
     }
 
+    if (!start) {
+      return addError({
+        field: 'start',
+        message: 'Selecione uma data de inicio',
+      })
+    }
+
+    const event = makeEvent(
+      eventName,
+      isFullDay,
+      start!,
+      end,
+      color,
+      description
+    )
+
     try {
       setLoading(true)
-      await CalendarService.addEvent(route.params.calendarId, {
-        title: eventName,
-        colorHue: color,
-        description,
-        type: isSameDay(start, end!) || !end ? 'single' : 'span',
-        start: start?.valueOf(),
-        end: end ? end.valueOf() : null, // firestore things, it doesn't understand `undefined`, just `null`
-      })
+      await CalendarService.addEvent(route.params.calendarId, event)
 
       navigation.goBack()
     } catch (e) {
@@ -109,42 +116,65 @@ export default function CreateEvent({
         <Input value={description} onChange={setDescription} multiline />
       </InputGroup>
 
-      <View
-        style={{
-          flexDirection: 'row',
-          width: '100%',
-          justifyContent: 'space-between',
-        }}
-      >
-        <InputGroup
-          label='Inicio'
-          width={'47%'}
-          error={!!getErrorMessageByField('start')}
-          errorMessage={getErrorMessageByField('start')}
+      <ToggleGroup label='Dia inteiro: ' width='100%'>
+        <Toggle
+          width={60}
+          headColor={{ on: theme.colors[500], off: theme.colors[800] }}
+          trackColor={{ on: theme.colors[200], off: theme.colors[200] }}
+          value={isFullDay}
+          onChange={() => setIsFullDay((p) => !p)}
+        />
+      </ToggleGroup>
+
+      {!isFullDay ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent: 'space-between',
+          }}
         >
+          <InputGroup
+            label='Inicio'
+            width={'47%'}
+            error={!!getErrorMessageByField('start')}
+            errorMessage={getErrorMessageByField('start')}
+          >
+            <DateSelector
+              placeholder='Escolha uma data'
+              onRequestOpen={() => true}
+              date={start}
+              setDate={handleSetStart}
+              minDate={new Date()}
+            />
+          </InputGroup>
+          <InputGroup
+            label='Fim'
+            width={'47%'}
+            error={!!getErrorMessageByField('end')}
+            errorMessage={getErrorMessageByField('end')}
+          >
+            <DateSelector
+              placeholder='Escolha uma data'
+              date={end}
+              setDate={(date) => setEnd(date)}
+              minDate={start}
+              onRequestOpen={handleOpenEndSelector}
+            />
+          </InputGroup>
+        </View>
+      ) : (
+        <InputGroup label='Início'>
           <DateSelector
-            placeholder='Escolha uma data'
-            onRequestOpen={() => true}
             date={start}
             setDate={handleSetStart}
-            minDate={new Date()}
-          />
-        </InputGroup>
-        <InputGroup
-          label='Fim'
-          width={'47%'}
-          error={!!getErrorMessageByField('end')}
-          errorMessage={getErrorMessageByField('end')}
-        >
-          <DateSelector
+            onRequestOpen={() => true}
             placeholder='Escolha uma data'
-            date={end}
-            setDate={(date) => setEnd(date)}
-            minDate={start}
-            onRequestOpen={handleOpenEndSelector}
+            minDate={new Date()}
+            onlyDate
           />
         </InputGroup>
-      </View>
+      )}
 
       <InputGroup
         label='Selecione uma cor'
@@ -176,4 +206,45 @@ const styles = StyleSheet.create({
     fontSize: theme.text.huge,
     fontWeight: 'bold',
   },
+  toggleGroup: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
 })
+
+function makeEvent(
+  title: string,
+  isFullDay: boolean,
+  start: Date,
+  end: Date | undefined,
+  colorHue: number,
+  description: string = ''
+): event {
+  let baseEvent = {
+    title,
+    description,
+    colorHue,
+    creatorId: '',
+  }
+
+  if (isFullDay) {
+    const type = 'fullDay'
+    return { ...baseEvent, type, start: start.valueOf() }
+  }
+  let type: 'single' | 'span'
+
+  if (!end || isSameDay(start, end)) {
+    type = 'single'
+  } else {
+    type = 'span'
+  }
+
+  return {
+    ...baseEvent,
+    type: type,
+    start: start.valueOf(),
+    end: end ? end.valueOf() : null,
+  }
+}
