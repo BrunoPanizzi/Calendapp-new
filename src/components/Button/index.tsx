@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Pressable, StyleSheet, ActivityIndicator } from 'react-native'
 
 import { theme } from '../../constants/Colors'
@@ -13,7 +14,7 @@ type props = {
 }
 
 // TODO: fix theming on the button
-export default function Button({
+function Button({
   children,
   disabled,
   onPress,
@@ -49,6 +50,7 @@ export default function Button({
     </Pressable>
   )
 }
+export default memo(Button)
 
 const styles = StyleSheet.create({
   button: {
