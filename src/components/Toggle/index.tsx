@@ -1,5 +1,12 @@
-import { useEffect, useRef } from 'react'
-import { StyleSheet, Animated, Pressable } from 'react-native'
+import { useEffect } from 'react'
+import { StyleSheet, Pressable } from 'react-native'
+import Animated, {
+  interpolate,
+  interpolateColor,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated'
 
 type props = {
   width: number
@@ -15,8 +22,12 @@ type props = {
   }
 }
 
-// TODO: some good code review for this thing, might use reanimated
-// also change the colors, its pretty bad right now
+const config = {
+  damping: 20,
+  mass: 1.3,
+  stiffness: 200,
+}
+
 export default function Toggle({
   width,
   value,
@@ -24,61 +35,50 @@ export default function Toggle({
   trackColor,
   headColor,
 }: props) {
-  const headPosition = useRef(new Animated.Value(0)).current
-  const headScale = useRef(new Animated.Value(1)).current
-
   const halfWidth = width / 2
 
+  const headPos = useSharedValue(value ? halfWidth : 0)
+  const isTouching = useSharedValue(0)
+
+  const animatedHeadStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: headPos.value },
+      { scale: interpolate(isTouching.value, [0, 1], [1, 1.25]) },
+    ],
+    backgroundColor: interpolateColor(
+      headPos.value,
+      [0, halfWidth],
+      [headColor.on, headColor.off]
+    ),
+  }))
+
+  const animatedTrackStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: interpolate(isTouching.value, [0, 1], [1, 0.85]) }],
+
+    backgroundColor: interpolateColor(
+      headPos.value,
+      [0, halfWidth],
+      [trackColor.on, trackColor.off]
+    ),
+  }))
+
   useEffect(() => {
-    Animated.timing(headPosition, {
-      useNativeDriver: false,
-      duration: 300,
-      toValue: value ? halfWidth : 0,
-    }).start()
+    headPos.value = withSpring(value ? halfWidth : 0, config)
   }, [value])
 
   return (
     <Pressable
       onPress={onChange}
       onPressIn={() => {
-        Animated.timing(headScale, {
-          useNativeDriver: false,
-          duration: 150,
-          toValue: 1.2,
-        }).start()
+        isTouching.value = withSpring(1, config)
       }}
-      onTouchEnd={() => {
-        Animated.timing(headScale, {
-          useNativeDriver: false,
-          duration: 150,
-          toValue: 1,
-        }).start()
+      onPressOut={() => {
+        isTouching.value = withSpring(0, config)
       }}
     >
-      <Animated.View
-        style={[
-          styles.track,
-          {
-            width,
-            backgroundColor: headPosition.interpolate({
-              inputRange: [0, halfWidth],
-              outputRange: [trackColor.off, trackColor.on],
-            }),
-          },
-        ]}
-      >
+      <Animated.View style={[styles.track, animatedTrackStyle, { width }]}>
         <Animated.View
-          style={[
-            styles.head,
-            {
-              width: halfWidth,
-              backgroundColor: headPosition.interpolate({
-                inputRange: [0, halfWidth],
-                outputRange: [headColor.off, headColor.on],
-              }),
-              transform: [{ translateX: headPosition }, { scale: headScale }],
-            },
-          ]}
+          style={[styles.head, animatedHeadStyle, { width: halfWidth }]}
         />
       </Animated.View>
     </Pressable>
@@ -88,12 +88,10 @@ export default function Toggle({
 const styles = StyleSheet.create({
   track: {
     aspectRatio: 2,
-    backgroundColor: '#f0f',
     borderRadius: 999,
   },
   head: {
     aspectRatio: 1,
-    backgroundColor: '#0ff',
     borderRadius: 999,
   },
 })
