@@ -1,106 +1,40 @@
-import { startTransition, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { isSameDay } from 'date-fns'
 
 import DateSelector from '../../components/DateSelector'
 import ColorSelection from '../../components/ColorSelector'
 
-import useErrors from '../../hooks/useErrors'
-
-import CalendarService from '../../services/CalendarService'
+import { RootStackScreenProps } from '../../../types'
 
 import { Input, InputGroup } from '../../components/Inputs'
 import Button from '../../components/Button'
-
-import { theme } from '../../constants/Colors'
-
-import { RootStackScreenProps } from '../../../types'
 import Toggle from '../../components/Toggle'
 import ToggleGroup from '../../components/Toggle/ToggleGroup'
-import { event } from '../../services/CalendarService/types'
+
+import { theme } from '../../constants/Colors'
+import useCreateEvent from './useCreateEvent'
 
 export default function CreateEvent({
   route,
   navigation,
 }: RootStackScreenProps<'CreateEvent'>) {
-  const { addError, getErrorMessageByField, removeError } = useErrors()
-  const [loading, setLoading] = useState(false)
-
-  const [eventName, setEventName] = useState('')
-  const [description, setDescription] = useState('')
-  const [isFullDay, setIsFullDay] = useState(true)
-  const [start, setStart] = useState<Date>()
-  const [end, setEnd] = useState<Date>()
-  const [color, setColor] = useState<number>()
-
-  const handleChangeName = (newName: string) => {
-    removeError('eventName')
-    setEventName(newName)
-    if (!newName) {
-      addError({ field: 'eventName', message: 'Escolha um nome para o evento' })
-    }
-  }
-
-  const handleSetStart = (date: Date | undefined) => {
-    removeError('start')
-    removeError('end')
-    setStart(date)
-  }
-
-  const handleOpenEndSelector = () => {
-    if (!start) {
-      addError({
-        field: 'end',
-        message: 'Selecione uma data de inicio primeiro',
-      })
-    }
-    return !!start
-  }
-  const handleSetColor = (colorHue: number) => {
-    removeError('color')
-    setColor(colorHue)
-  }
-  const handleSubmit = async () => {
-    if (!eventName) {
-      return addError({
-        field: 'eventName',
-        message: 'Escolha um nome para o evento',
-      })
-    }
-    if (!color) {
-      return addError({
-        field: 'color',
-        message: 'Escolha uma cor para o evento',
-      })
-    }
-
-    if (!start) {
-      return addError({
-        field: 'start',
-        message: 'Selecione uma data de inicio',
-      })
-    }
-
-    const event = makeEvent(
-      eventName,
-      isFullDay,
-      start!,
-      end,
-      color,
-      description
-    )
-
-    try {
-      setLoading(true)
-      await CalendarService.addEvent(route.params.calendarId, event)
-
-      navigation.goBack()
-    } catch (e) {
-      console.log(e)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const {
+    getErrorMessageByField,
+    eventName,
+    handleChangeName,
+    description,
+    handleChangeDescription,
+    isFullDay,
+    setIsFullDay,
+    start,
+    handleChangeStart,
+    end,
+    handleChangeEnd,
+    handleOpenEndSelector,
+    color,
+    handleChangeColor,
+    handleSubmit,
+    loading,
+  } = useCreateEvent({ route, navigation })
 
   return (
     <View style={styles.container}>
@@ -113,7 +47,11 @@ export default function CreateEvent({
       </InputGroup>
 
       <InputGroup label='Descrição'>
-        <Input value={description} onChange={setDescription} multiline />
+        <Input
+          value={description}
+          onChange={handleChangeDescription}
+          multiline
+        />
       </InputGroup>
 
       <ToggleGroup label='Dia inteiro: ' width='100%'>
@@ -126,28 +64,29 @@ export default function CreateEvent({
         />
       </ToggleGroup>
 
-      {!isFullDay ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '100%',
-            justifyContent: 'space-between',
-          }}
+      <View
+        style={{
+          flexDirection: 'row',
+          width: '100%',
+          justifyContent: 'space-between',
+        }}
+      >
+        <InputGroup
+          label='Inicio'
+          width={isFullDay ? '100%' : '47%'}
+          error={!!getErrorMessageByField('start')}
+          errorMessage={getErrorMessageByField('start')}
         >
-          <InputGroup
-            label='Inicio'
-            width={'47%'}
-            error={!!getErrorMessageByField('start')}
-            errorMessage={getErrorMessageByField('start')}
-          >
-            <DateSelector
-              placeholder='Escolha uma data'
-              onRequestOpen={() => true}
-              date={start}
-              setDate={handleSetStart}
-              minDate={new Date()}
-            />
-          </InputGroup>
+          <DateSelector
+            placeholder='Escolha uma data'
+            onRequestOpen={() => true}
+            date={start}
+            setDate={handleChangeStart}
+            minDate={new Date()}
+            onlyDate={isFullDay}
+          />
+        </InputGroup>
+        {!isFullDay ? (
           <InputGroup
             label='Fim'
             width={'47%'}
@@ -157,24 +96,13 @@ export default function CreateEvent({
             <DateSelector
               placeholder='Escolha uma data'
               date={end}
-              setDate={(date) => setEnd(date)}
+              setDate={handleChangeEnd}
               minDate={start}
               onRequestOpen={handleOpenEndSelector}
             />
           </InputGroup>
-        </View>
-      ) : (
-        <InputGroup label='Início'>
-          <DateSelector
-            date={start}
-            setDate={handleSetStart}
-            onRequestOpen={() => true}
-            placeholder='Escolha uma data'
-            minDate={new Date()}
-            onlyDate
-          />
-        </InputGroup>
-      )}
+        ) : null}
+      </View>
 
       <InputGroup
         label='Selecione uma cor'
@@ -183,7 +111,7 @@ export default function CreateEvent({
       >
         <ColorSelection
           selectedColor={color}
-          setSelectedColor={handleSetColor}
+          setSelectedColor={handleChangeColor}
         />
       </InputGroup>
 
@@ -213,38 +141,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 })
-
-function makeEvent(
-  title: string,
-  isFullDay: boolean,
-  start: Date,
-  end: Date | undefined,
-  colorHue: number,
-  description: string = ''
-): event {
-  let baseEvent = {
-    title,
-    description,
-    colorHue,
-    creatorId: '',
-  }
-
-  if (isFullDay) {
-    const type = 'fullDay'
-    return { ...baseEvent, type, start: start.valueOf() }
-  }
-  let type: 'single' | 'span'
-
-  if (!end || isSameDay(start, end)) {
-    type = 'single'
-  } else {
-    type = 'span'
-  }
-
-  return {
-    ...baseEvent,
-    type: type,
-    start: start.valueOf(),
-    end: end ? end.valueOf() : null,
-  }
-}
